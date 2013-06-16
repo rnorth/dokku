@@ -1,7 +1,9 @@
 #!/bin/bash
 APP="$1"; CONTAINER="$2"
 
-CUSTOM_ENV=$(< $HOME/$APP/CUSTOM_ENV)
+if [[ -f $HOME/$APP/CUSTOM_ENV ]]; then
+  CUSTOM_ENV=$(< $HOME/$APP/CUSTOM_ENV)
+fi
 
 if [[ ! -f "$HOME/$APP/PORT" ]]; then
   # First deploy
