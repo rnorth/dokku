@@ -1,30 +1,23 @@
 #!/bin/bash
 set -e
-APP="$1"
-CONTAINER="app/$APP"
+export APP="$1"
+export CONTAINER="app/$APP"
+export PLUGIN_PATH=$HOME/plugins
+
+pluginhook pre-build
 
 echo "-----> Building $APP ..."
 cat | $HOME/buildstep $CONTAINER
 echo "-----> Build complete!"
 
-if [[ -d $HOME/predeploy.d ]]; then
-echo "-----> Running platform predeploy scripts"
-	for i in $HOME/predeploy.d/*.sh; do
-		$i $APP $CONTAINER
-	done
-echo "-----> Predeploy scripts complete"
-fi
+pluginhook post-build
+
+pluginhook pre-deploy
 
 echo "-----> Deploying $APP ..."
 $HOME/deploystep $APP $CONTAINER
-echo "-----> Application deployed:"
-echo "       http://$(< "$HOME/$APP/HOSTNAME")"
 echo
 
-if [[ -d $HOME/postdeploy.d ]]; then
-echo "-----> Running platform postdeploy scripts"
-	for i in $HOME/postdeploy.d/*.sh; do
-		$i $APP $CONTAINER
-	done
-echo "-----> Postdeploy scripts complete"
+pluginhook post-deploy
+
 fi
