@@ -1,23 +1,25 @@
 #!/bin/bash
 set -e
-export APP="$1"
-export CONTAINER="app/$APP"
+APP="$1"
+CONTAINER="app/$APP"
 export PLUGIN_PATH=$HOME/plugins
 
-pluginhook pre-build
+# Retain app payload from stdin while other I/O may potentially occur
+TEMP_PAYLOAD=$(mktemp /tmp/dokku_payload.XXXXXX)
+cat > $TEMP_PAYLOAD
+
+pluginhook pre-build $APP $CONTAINER
 
 echo "-----> Building $APP ..."
-cat | $HOME/buildstep $CONTAINER
+$HOME/buildstep $CONTAINER < $TEMP_PAYLOAD
 echo "-----> Build complete!"
 
-pluginhook post-build
+pluginhook post-build $APP $CONTAINER
 
-pluginhook pre-deploy
+pluginhook pre-deploy $APP $CONTAINER
 
 echo "-----> Deploying $APP ..."
 $HOME/deploystep $APP $CONTAINER
 echo
 
-pluginhook post-deploy
-
-fi
+pluginhook post-deploy $APP $CONTAINER

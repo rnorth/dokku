@@ -17,8 +17,8 @@ dpkg -i lxc-docker_0.4.2-1_amd64.deb
 apt-get install -f -y
 rm lxc-docker_0.4.2-1_amd64.deb
 
-cd ~ && git clone ${DOKKU_REPO}
-cd dokku && make install
+git clone ${DOKKU_REPO} ~/dokku
+cd ~/dokku && make install
 if [[ $DOKKU_STACK ]]; then
   curl "$DOKKU_STACK" | gunzip -cd | docker import - progrium/buildstep
 else

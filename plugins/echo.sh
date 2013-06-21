@@ -1,4 +1,7 @@
 #!/bin/bash
+
+cat
+
 case "$1" in
   pre-build)
     echo ">>> Pre-build step"
